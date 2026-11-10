@@ -1,0 +1,305 @@
+por si acaso esto es del 2 que he estado viendo : <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Adopción - Refugio Local</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            padding-bottom: 60px;
+        }
+
+        header {
+            background: #ffffff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #3b82f6;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+
+        .filtros-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            padding: 1.5rem;
+            background: #e5e7eb;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        .btn-filtro {
+            padding: 0.5rem 1.5rem;
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        #ver-todos:checked ~ .filtros-container label[for="ver-todos"],
+        #ver-perros:checked ~ .filtros-container label[for="ver-perros"],
+        #ver-gatos:checked ~ .filtros-container label[for="ver-gatos"] {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .grid-mascotas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        #ver-perros:checked ~ .grid-mascotas article:not(.perro),
+        #ver-gatos:checked ~ .grid-mascotas article:not(.gato) {
+            display: none;
+        }
+
+        .tarjeta-mascota {
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .foto-placeholder {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .info-mascota {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .info-mascota h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .detalles {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+
+        .btn-abrir-form {
+            display: inline-block;
+            text-align: center;
+            background: #10b981;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-abrir-form:hover {
+            background: #059669;
+        }
+
+        .modal-formulario {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-formulario:target {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .contenido-modal {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .btn-cerrar-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            text-decoration: none;
+            color: #9ca3af;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        button[type="submit"] {
+            background: #3b82f6;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        footer {
+            background: #1f2937;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <input type="radio" id="ver-todos" name="filtro-mascotas" checked>
+    <input type="radio" id="ver-perros" name="filtro-mascotas">
+    <input type="radio" id="ver-gatos" name="filtro-mascotas">
+
+    <header>
+        <div class="logo">🐾 Refugio Patitas</div>
+        <p>Estructura Estática Avanzada</p>
+    </header>
+
+    <section class="filtros-container">
+        <label for="ver-todos" class="btn-filtro">Todos</label>
+        <label for="ver-perros" class="btn-filtro">🐶 Perros</label>
+        <label for="ver-gatos" class="btn-filtro">🐱 Gatos</label>
+    </section>
+
+    <main class="grid-mascotas">
+        
+        <article class="tarjeta-mascota perro">
+            <div class="foto-placeholder" style="background: #ffeaa7;">🐶</div>
+            <div class="info-mascota">
+                <h3>Toby (1 año)</h3>
+                <p class="detalles">Raza criolla, tamaño mediano. Alegre, protector y activo.</p>
+                <a href="#modal-adopcion" class="btn-abrir-form">Adoptar</a>
+            </div>
+        </article>
+
+        <article class="tarjeta-mascota gato">
+            <div class="foto-placeholder" style="background: #fab1a0;">🐱</div>
+            <div class="info-mascota">
+                <h3>Mimi (6 meses)</h3>
+                <p class="detalles">Común europeo. Juguetona, limpia y acostumbrada a departamentos.</p>
+                <a href="#modal-adopcion" class="btn-abrir-form">Adoptar</a>
+            </div>
+        </article>
+
+        <article class="tarjeta-mascota perro">
+            <div class="foto-placeholder" style="background: #74b9ff;">🐕</div>
+            <div class="info-mascota">
+                <h3>Rocco (3 años)</h3>
+                <p class="detalles">Tamaño grande. Muy noble, obediente y entrenado.</p>
+                <a href="#modal-adopcion" class="btn-abrir-form">Adoptar</a>
+            </div>
+        </article>
+
+    </main>
+
+    <div id="modal-adopcion" class="modal-formulario">
+        <div class="contenido-modal">
+            <a href="#" class="btn-cerrar-modal">&times;</a>
+            
+            <h2>Formulario de Adopción</h2>
+            <p>Completa tus datos para iniciar el proceso de evaluación.</p>
+
+            <form action="#">
+                <div>
+                    <label for="nombre">Nombre Completo:</label>
+                    <input type="text" id="nombre" required placeholder="Ej. Juan Pérez">
+                </div>
+                <div>
+                    <label for="correo">Correo Electrónico:</label>
+                    <input type="email" id="correo" required placeholder="juan@correo.com">
+                </div>
+                <div>
+                    <label for="vivienda">Tipo de Vivienda:</label>
+                    <select id="vivienda" required>
+                        <option value="">Selecciona una opción...</option>
+                        <option value="casa">Casa con patio</option>
+                        <option value="dep">Departamento</option>
+                        <option value="finca">Finca / Campo</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="motivo">¿Por qué deseas adoptar?</label>
+                    <textarea id="motivo" rows="3" placeholder="Cuéntanos brevemente..."></textarea>
+                </div>
+                <button type="submit">Enviar Solicitud Estática</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Refugio Patitas Local - Proyecto Maquetación Semántica Avanzada</p>
+    </footer>
+
+</body>
+</html>
+tenemos que subir a git y luego darle el link
